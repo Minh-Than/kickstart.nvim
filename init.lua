@@ -8,7 +8,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -51,11 +51,7 @@ vim.o.signcolumn = 'yes'
 -- Decrease update time
 vim.o.updatetime = 250
 
--- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
-
--- Configure how new splits should be opened
-vim.o.splitright = true
+-- Decrease mapped sequence wait time vim.o.timeoutlen = 300 Configure how new splits should be opened vim.o.splitright = true
 vim.o.splitbelow = true
 
 -- Sets how neovim will display certain whitespace characters in the editor.
@@ -115,7 +111,8 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', ':T', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', ':T', ':NvimTreeToggle .<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', '<space>te', ':ToggleTerm name=berigoo!!<CR>', { desc = 'Open a new terminal' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -306,12 +303,12 @@ require('lazy').setup({
     version = false,
     opts = {
       mappings = {
-        close = ':Y',
+        close = '<space>tr',
       },
     },
     keys = {
       {
-        ':Y',
+        '<space>tr',
         function()
           local mf = require 'mini.files'
           if not mf.close() then
@@ -322,6 +319,19 @@ require('lazy').setup({
       },
     },
   },
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      shell = '/opt/homebrew/bin/fish',
+      direction = 'float',
+      float_opts = {
+        border = 'curved',
+        title_pos = 'center',
+      },
+    },
+  },
+  -- Using lazy.nvim:
   -- NOTE: Plugins can specify dependencies.
   --
   -- The dependencies are proper plugin specifications as well - anything
@@ -350,7 +360,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      -- { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -647,6 +657,10 @@ require('lazy').setup({
         -- pyright = {},
         rust_analyzer = {},
         jdtls = {},
+        cssmodules_ls = {},
+        eslint = {},
+        ts_ls = {},
+        yamlls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:

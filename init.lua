@@ -14,14 +14,10 @@ vim.g.have_nerd_font = true
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
-
--- Make line numbers default
+-- Make line numbers default vim.o.number = true You can also add relative line numbers, to help with jumping. Experiment for yourself to see if you like it! vim.o.relativenumber = true Enable mouse mode, can be useful for resizing splits for example!
+vim.o.guifont = 'JuliaMono Nerd Font Mono:h14'
 vim.o.number = true
--- You can also add relative line numbers, to help with jumping.
---  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
-
--- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
@@ -69,13 +65,7 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.o.inccommand = 'split'
 
 -- Show which line your cursor is on
-vim.o.cursorline = true
-
--- Minimal number of screen lines to keep above and below the cursor.
-vim.o.scrolloff = 10
-
--- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
--- instead raise a dialog asking if you wish to save the current file(s)
+vim.o.cursorline = true -- Minimal number of screen lines to keep above and below the cursor. vim.o.scrolloff = 10 if performing an operation that would fail due to unsaved changes in the buffer (like `:q`), instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
@@ -285,6 +275,12 @@ require('lazy').setup({
       -- Smear cursor in insert mode.
       -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
       smear_insert_mode = true,
+
+      stiffness = 0.8,
+      trailing_stiffness = 0.5,
+      stiffmess_insert_mode = 0.6,
+      trailing_stiffness_insert_mode = 0.6,
+      distance_stop_animating = 0.5,
     },
   },
   {
@@ -298,6 +294,9 @@ require('lazy').setup({
       require('nvim-tree').setup {}
     end,
   },
+  --{ 'echasnovski/mini.icons', version = '*', opts = {
+  --  style = 'glyph',
+  --} },
   {
     'echasnovski/mini.files',
     version = false,
@@ -661,6 +660,7 @@ require('lazy').setup({
         eslint = {},
         ts_ls = {},
         yamlls = {},
+        jsonls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:

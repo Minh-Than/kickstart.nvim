@@ -101,7 +101,7 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', ':T', ':NvimTreeToggle .<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', '<space>tt', ':NvimTreeToggle .<CR>', { desc = 'Toggle NvimTree' })
 vim.keymap.set('n', '<space>te', ':ToggleTerm name=berigoo!!<CR>', { desc = 'Open a new terminal' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes

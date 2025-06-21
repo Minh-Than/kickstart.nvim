@@ -67,6 +67,7 @@ vim.o.inccommand = 'split'
 -- Show which line your cursor is on
 vim.o.cursorline = true -- Minimal number of screen lines to keep above and below the cursor. vim.o.scrolloff = 10 if performing an operation that would fail due to unsaved changes in the buffer (like `:q`), instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
+vim.o.scrolloff = 12
 vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
@@ -101,7 +102,8 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', '<space>tt', ':NvimTreeToggle .<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', '<space>tt', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+vim.keymap.set('n', '<space>tf', ':NvimTreeFocus<CR>', { desc = 'Focus on an existing NvimTree' })
 vim.keymap.set('n', '<space>te', ':ToggleTerm name=berigoo!!<CR>', { desc = 'Open a new terminal' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
@@ -257,6 +259,7 @@ require('lazy').setup({
   },
   {
     'sphamba/smear-cursor.nvim',
+    cond = not vim.g.neovide,
     opts = {
       -- Smear cursor when switching buffers or windows.
       smear_between_buffers = true,
@@ -862,13 +865,19 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
+  {
+    'thesimonho/kanagawa-paper.nvim',
+    -- lazy = false,
+    priority = 1000,
+    init = function()
+      vim.cmd.colorscheme 'kanagawa-paper-canvas'
+    end,
+    opts = { ... },
+  },
+  {
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    priority = 1, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
@@ -877,10 +886,7 @@ require('lazy').setup({
         },
       }
 
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'habamax'
     end,
   },
 

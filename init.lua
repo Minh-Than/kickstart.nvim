@@ -9,13 +9,14 @@ vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
+vim.o.guifont = 'JetBrainsMono Nerd Font Mono:h15'
+-- Make sure to install JuliaMono Nerd Font Mono for legacy fallback
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 -- Make line numbers default vim.o.number = true You can also add relative line numbers, to help with jumping. Experiment for yourself to see if you like it! vim.o.relativenumber = true Enable mouse mode, can be useful for resizing splits for example!
-vim.o.guifont = 'JuliaMono Nerd Font Mono:h14'
 vim.o.number = true
 vim.o.relativenumber = true
 vim.o.mouse = 'a'
@@ -102,9 +103,12 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-vim.keymap.set('n', '<space>tt', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
-vim.keymap.set('n', '<space>tf', ':NvimTreeFocus<CR>', { desc = 'Focus on an existing NvimTree' })
 vim.keymap.set('n', '<space>te', ':ToggleTerm name=berigoo!!<CR>', { desc = 'Open a new terminal' })
+vim.keymap.set('n', '<space>b', ':BlameToggle<CR>', { desc = 'Toggle git blame' })
+vim.keymap.set('n', '[c', ':TSContext toggle<CR>', { desc = 'Toggle method context' })
+vim.keymap.set('n', '[j', function()
+  require('treesitter-context').go_to_context(vim.v.count1)
+end, { silent = true })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -123,6 +127,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function()
     vim.hl.on_yank()
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'java',
+  callback = function()
+    vim.bo.tabstop = 4
+    vim.bo.shiftwidth = 4
+    vim.bo.softtabstop = 4
+    vim.bo.expandtab = true
   end,
 })
 
@@ -155,6 +169,17 @@ rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  {
+    'thePrimeagen/vim-be-good',
+    cmd = 'VimBeGood',
+  },
+  {
+    'FabijanZulj/blame.nvim',
+    lazy = false,
+    config = function()
+      require('blame').setup {}
+    end,
+  },
   'vuciv/golf',
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -279,27 +304,13 @@ require('lazy').setup({
       -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
       smear_insert_mode = true,
 
-      stiffness = 0.8,
-      trailing_stiffness = 0.5,
-      stiffmess_insert_mode = 0.6,
-      trailing_stiffness_insert_mode = 0.6,
-      distance_stop_animating = 0.5,
+      -- stiffness = 0.8,
+      -- trailing_stiffness = 0.5,
+      -- stiffmess_insert_mode = 0.6,
+      -- trailing_stiffness_insert_mode = 0.6,
+      -- distance_stop_animating = 0.5,
     },
   },
-  {
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
-    config = function()
-      require('nvim-tree').setup {}
-    end,
-  },
-  --{ 'echasnovski/mini.icons', version = '*', opts = {
-  --  style = 'glyph',
-  --} },
   {
     'echasnovski/mini.files',
     version = false,
@@ -664,6 +675,8 @@ require('lazy').setup({
         ts_ls = {},
         yamlls = {},
         jsonls = {},
+        nginx_language_server = {},
+        dockerls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -864,32 +877,74 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
+  -- {
+  --   'AlexvZyl/nordic.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('nordic').load()
+  --   end,
+  -- },
   {
-    'thesimonho/kanagawa-paper.nvim',
-    -- lazy = false,
+    'nickkadutskyi/jb.nvim',
+    lazy = false,
     priority = 1000,
-    init = function()
-      vim.cmd.colorscheme 'kanagawa-paper-canvas'
-    end,
-    opts = { ... },
-  },
-  {
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1, -- Make sure to load this before all the other start plugins.
+    opts = {},
     config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      vim.cmd.colorscheme 'habamax'
+      -- require("jb").setup({transparent = true})
+      vim.cmd 'colorscheme jb'
     end,
   },
+  -- {
+  --   'neanias/everforest-nvim',
+  --   version = false,
+  --   lazy = false,
+  --   priority = 1000, -- make sure to load this before all the other start plugins
+  --   -- Optional; default configuration will be used if setup isn't called.
+  --   init = function()
+  --     vim.cmd.colorscheme 'everforest'
+  --   end,
+  --   config = function()
+  --     require('everforest').setup {
+  --       background = 'hard',
+  --       -- Your config here
+  --     }
+  --   end,
+  -- },
+  -- {
+  --   'thesimonho/kanagawa-paper.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   init = function()
+  --     vim.cmd.colorscheme 'kanagawa-paper-ink'
+  --   end,
+  --   opts = { ... },
+  -- },
+  -- {
+  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  --   'folke/tokyonight.nvim',
+  --   priority = 1, -- Make sure to load this before all the other start plugins.
+  --   config = function()
+  --     ---@diagnostic disable-next-line: missing-fields
+  --     require('tokyonight').setup {
+  --       styles = {
+  --         comments = { italic = false }, -- Disable italics in comments
+  --       },
+  --     }
 
+  --     vim.cmd.colorscheme 'habamax'
+  --   end,
+  -- },
+  {
+    'toppair/peek.nvim',
+    event = { 'VeryLazy' },
+    build = 'deno task --quiet build:fast',
+    config = function()
+      require('peek').setup()
+      vim.api.nvim_create_user_command('PeekOpen', require('peek').open, {})
+      vim.api.nvim_create_user_command('PeekClose', require('peek').close, {})
+    end,
+  },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -955,6 +1010,7 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  { 'nvim-treesitter/nvim-treesitter-context' },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
